@@ -97,6 +97,15 @@ html, body {
 .topbar-search input { border: none; outline: none; background: transparent; font-size: 13px; color: var(--text); width: 100%; min-width: 0; }
 .topbar-search input::placeholder { color: var(--text-3); }
 
+/* Pipeline layout switching */
+.pipeline-mobile { display: none; }
+.pipeline-desktop { display: flex; }
+
+@media (max-width: 640px) {
+  .pipeline-desktop { display: none; }
+  .pipeline-mobile { display: block; }
+}
+
 @media (max-width: 480px) {
   .grid-3col { grid-template-columns: 1fr 1fr; }
   .grid-2col { grid-template-columns: 1fr; }

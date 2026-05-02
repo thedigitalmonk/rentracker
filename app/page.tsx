@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { Plus, Archive, Search, RefreshCw } from 'lucide-react'
+import { Plus, Archive, Search, RefreshCw, ChevronDown } from 'lucide-react'
 import { supabase, Lead, LeadStatus, STATUS_CONFIG, ACTIVE_STATUSES, TERMINAL_STATUSES } from '@/lib/supabase'
 import { StatusBadge } from '@/components/StatusBadge'
 import { QuickCapture } from '@/components/QuickCapture'
@@ -41,6 +41,41 @@ function PipelineColumn({ status, leads, onSelect }: { status: LeadStatus; leads
         {leads.map(l => <LeadCard key={l.id} lead={l} onClick={() => onSelect(l.id)} />)}
         {leads.length === 0 && <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--text-3)', fontSize: 12 }}>—</div>}
       </div>
+    </div>
+  )
+}
+
+function MobileAccordionPipeline({ statuses, leads, onSelect }: { statuses: LeadStatus[]; leads: Lead[]; onSelect: (id: string) => void }) {
+  const firstWithLeads = statuses.find(s => leads.some(l => l.status === s)) ?? statuses[0]
+  const [openStatus, setOpenStatus] = useState<LeadStatus | null>(firstWithLeads)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {statuses.map(status => {
+        const cfg = STATUS_CONFIG[status]
+        const stageLeads = leads.filter(l => l.status === status)
+        const isOpen = openStatus === status
+        return (
+          <div key={status} style={{ border: `1px solid ${cfg.color}30`, borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+            <button
+              onClick={() => setOpenStatus(isOpen ? null : status)}
+              style={{ width: '100%', padding: '12px 14px', background: cfg.bg, border: 'none', borderBottom: isOpen ? `2px solid ${cfg.color}` : `2px solid transparent`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+            >
+              <span style={{ fontWeight: 600, fontSize: 12, color: cfg.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{cfg.label}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, color: cfg.color, background: `${cfg.color}20`, borderRadius: 10, padding: '1px 7px', fontWeight: 700 }}>{stageLeads.length}</span>
+                <ChevronDown size={14} style={{ color: cfg.color, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </div>
+            </button>
+            {isOpen && (
+              <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {stageLeads.map(l => <LeadCard key={l.id} lead={l} onClick={() => onSelect(l.id)} />)}
+                {stageLeads.length === 0 && <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--text-3)', fontSize: 12 }}>—</div>}
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -110,10 +145,16 @@ export default function Home() {
           <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{pipelineLeads.length} leads</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 20 }}>
+        {/* Desktop: horizontal kanban */}
+        <div className="pipeline-desktop" style={{ gap: 16, overflowX: 'auto', paddingBottom: 20 }}>
           {ACTIVE_STATUSES.map(status => (
             <PipelineColumn key={status} status={status} leads={pipelineLeads.filter(l => l.status === status)} onSelect={setSelectedLeadId} />
           ))}
+        </div>
+
+        {/* Mobile: vertical accordion */}
+        <div className="pipeline-mobile">
+          <MobileAccordionPipeline statuses={ACTIVE_STATUSES} leads={pipelineLeads} onSelect={setSelectedLeadId} />
         </div>
 
         {closedLeads.length > 0 && (
