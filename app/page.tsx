@@ -114,7 +114,7 @@ export default function Home() {
       {/* Topbar */}
       <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '0 16px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, position: 'sticky', top: 0, zIndex: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
-          <span style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.3, color: 'var(--accent)', flexShrink: 0 }}>RENTAL<span style={{ color: 'var(--text-3)', fontWeight: 400 }}>/</span>TRACKER</span>
+          <span style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.3, color: 'var(--accent)', flexShrink: 0 }}>RT</span>
           <div className="topbar-search">
             <Search size={13} style={{ color: 'var(--text-3)', flexShrink: 0 }} />
             <input placeholder="Search leads…" value={search} onChange={e => setSearch(e.target.value)} />
