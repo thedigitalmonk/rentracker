@@ -4,6 +4,11 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Rental Tracker',
   description: 'Personal rental lead tracker',
+  appleWebApp: {
+    capable: true,
+    title: 'Rental Tracker',
+    statusBarStyle: 'black-translucent',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
